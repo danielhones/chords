@@ -1,0 +1,77 @@
+.header {
+    font-family: 'Lora', serif;
+    font-size: 115%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.artist,
+.album {
+    display: inline-block;
+    margin-top: 0px;
+}
+
+.album {
+    text-decoration: underline;
+}
+
+.title {
+    text-decoration: underline;
+}
+
+
+.chord-chart {
+    font-size: 2.2em;
+    margin: auto;
+    width: 90%;
+}
+
+.measure {
+    display: inline-block;
+    font-family: "Source Sans Pro", sans-serif;
+    padding: 3px;
+}
+
+.barline {
+    float: right;
+    display: inline-block;
+    border-left: solid #000000;
+}
+
+.double-barline {
+    float: right;
+    display: inline-block;
+    
+    /* One way to do it.  The benefit here is that it lines up vertically with the barlines above it.*/
+    border-left:  double #000000;
+    border-width: 8px; 
+    
+    /* This is another way to do it, the benefit being the right side barline is thicker: */
+    /*
+    border: solid #000000;
+    border-width: 0px 4px 0px 2px;
+    width: 4px;
+   */
+}
+
+.left-repeat {
+    
+}
+
+.right-repeat {
+
+}
+
+.space-on-bottom {
+    margin-bottom: 1em;
+}
+
+.same-size {
+    font-size: 1em;
+}
+
+
+
+
+
+
