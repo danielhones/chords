@@ -10,12 +10,9 @@ Album: Standard
 |D-7		|G7		|Cmaj7		|.		|
 |F-7		|Bb7		|Ebmaj7		|D-7	G7	|
 
-(A)
-|Cmaj7		|.		|Cmin7		|.		|
-|D7		|Dbmaj7		|Cmaj7		|A7		|
-
 (C)
 |D-7	D-7/C	|B-7b5  E7	|A-7    A-7/G	|F#-7b5  B7	|
 |E-7	A7	|D-7	G7	|Cmaj7  A-7	|D-7	G7	||
 
+Form: ABAC
 
