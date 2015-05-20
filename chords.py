@@ -22,7 +22,7 @@ class ChordChart(object):
             'url': None,
             'form': None,
         }
-        self.chordchart = []
+        self.sections = []
         self.change_text(raw_text)
 
     def change_text(self, new_text):
@@ -41,7 +41,7 @@ class ChordChart(object):
             if START_SECTION_RE.match(next_line) or START_MEASURE_RE.match(next_line):
                 self.lines.appendleft(next_line)
                 new_section = SongSection(self.lines)  # This mutates the deque
-                self.chordchart.append(new_section)
+                self.sections.append(new_section)
         
     def parse_metadata(self):
         match = HEADER_RE.match( self.lines[0] )
@@ -53,10 +53,17 @@ class ChordChart(object):
             match = HEADER_RE.match( self.lines[0] )
 
     def __repr__(self):
-        return 'ChordChart(%s)' % self.raw_text
+        return 'ChordChart(\'%s\')' % self.text
+
+    def __str__(self):
+        return self.metadata['title']
 
     def get_json(self):
-        pass
+        data = [json.loads(x.get_json()) for x in self.sections]
+        return json.dumps(
+            {'metadata': self.metadata,
+             'chart': data})
+
     
 
 class SongSection(object):
@@ -85,6 +92,11 @@ class SongSection(object):
                     self.measures.append(Measure(i))
             lines.popleft()
 
+    def get_json(self):
+        data = [json.loads(x.get_json()) for x in self.measures]
+        data.insert(0, self.section_name)
+        return json.dumps(data)
+
                     
 class Measure(object):
     def __init__(self, text):
@@ -96,10 +108,13 @@ class Measure(object):
         new_chords = [x for x in self.text.split() if x != '']
         for i in new_chords:
             self.chords.append(Chord(i))
-        #print 'Measure: \'' + str(new_chords) + "'"
-
+        
+    def get_json(self):
+        data = [json.loads(x.get_json()) for x in self.chords]
+        return json.dumps(data)
+            
     def __repr__(self):
-        return 'Measure(%s)' % self.text
+        return 'Measure(\'%s\')' % self.text
         
 
 
@@ -116,6 +131,7 @@ class Chord(object):
         self.parse_text()
         
     def parse_text(self):
+        # TODO: clean this up a bit
         if self.text == '.':
             self.rootnote = self.SPACE
             self.quality = ''
@@ -143,24 +159,28 @@ class Chord(object):
         # TODO: Make this not suck so bad.  Also I need to make it substitute the major 7 triangle symbol,
         # the dim symbol, all minor variants with '-'
         attrs = ['rootnote', 'quality']
-        for i in attrs:
-            x = getattr(self, i)
-            x.replace('#', self.SHARP_SIGN)
-            x.replace('b', self.FLAT_SIGN)
+        self.rootnote = self.rootnote.replace('#', self.SHARP_SIGN)
+        self.rootnote = self.rootnote.replace('b', self.FLAT_SIGN)
+        self.quality = self.quality.replace('#', self.SHARP_SIGN)
+        self.quality = self.quality.replace('b', self.FLAT_SIGN)
         if self.slashnote:
-            self.slashnote.replace('#', self.SHARP_SIGN)
-            self.slashnote.replace('b', self.FLAT_SIGN)
+            self.slashnote = self.slashnote.replace('#', self.SHARP_SIGN)
+            self.slashnote = self.slashnote.replace('b', self.FLAT_SIGN)
+
             
     def get_json(self):
         # There's got to be a more elegant way to do this:
-        #return json.dumps()
-        pass
+        return json.dumps(
+            {'rootnote': self.rootnote,
+             'quality': self.quality,
+             'slashnote': self.slashnote})
     
     def __repr__(self):
-        return 'Chord(%s)' % self.text
+        return 'Chord(\'%s\')' % self.text
 
     def __str__(self):
         return self.text
-            
-def pretty_print(data):
-    print json.dumps(data, indent=4, separators=(',', ': '))
+
+    
+def json_pprint(data):
+    print json.dumps(json.loads(data), indent=4)
