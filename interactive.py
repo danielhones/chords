@@ -2,9 +2,11 @@ from chords import *
 
 with open('greendolphin.txt') as f:
     text = f.read()
-greendolphin = ChordChart(text)
+greendolphin = ChordChartMaker(text)
+print 'greendolphin = ChordChartMaker(text)'
+
 
 with open('blues.txt') as f:
     text = f.read()
-blues = ChordChart(text)
-
+blues = ChordChartMaker(text)
+print 'blues = ChordChartMaker(text)'

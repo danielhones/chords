@@ -11,8 +11,8 @@ Write your chart and save as a text file, and compile it to JSON like this:
     chart = ChordChart(text)
     chart.get_json()
 
-To pretty print it, use:
-`chords.json_pprint(chart.get_json())`
+To get it with indentation for pretty printing, use:
+`chart.get_json(pretty=True)`
 
 You can also get JSON for individual chords or measures by using the Chord or Measure class:
-`chords.Chord('Cmaj7/E').get_json`
+`chords.Chord('Cmaj7/E').get_json()`
