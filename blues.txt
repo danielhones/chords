@@ -1,7 +1,0 @@
-Title: Blues
-Artist: Everyone
-Album: Every album
-
-|F7	|Bb7	|F7	|.	|
-|Bb7	|	|F7	|.	|
-|C7	|Bb7	|F7	|C7	|

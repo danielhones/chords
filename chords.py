@@ -1,5 +1,9 @@
 """
 Compile chord charts to JSON
+
+TODO:
+- Make Section and Measure inherit from collections.abc so they can be iterated like a normal list
+
 """
 
 from collections import deque
@@ -61,12 +65,13 @@ class ChordChartMaker(object):
     def transpose(self, semitones):
         for section in self.sections:
             for measure in section.measures:
-                for chord in measure:
+                for chord in measure.chords:
                     chord.transpose(semitones)
+        return self
 
-    def get_json(self, transpose=0, pretty=False):
+    def get_json(self, pretty=False):
         indent = 4 if pretty else 0
-        data = [json.loads(x.get_json(transpose=transpose)) for x in self.sections]
+        data = [json.loads(x.get_json()) for x in self.sections]
         return json.dumps(
             {'metadata': self.metadata,
              'chart': data},
@@ -82,6 +87,7 @@ class SongSection(object):
             self.section_name = ''
         self.measures = []
         self.parse_lines(lines)
+        self.measures[-1].double_barline = True
 
     def parse_lines(self, lines):
         while lines:
@@ -99,8 +105,8 @@ class SongSection(object):
                     self.measures.append(Measure(i))
             lines.popleft()
 
-    def get_json(self, transpose=0):
-        data = [json.loads(x.get_json(transpose=transpose)) for x in self.measures]
+    def get_json(self):
+        data = [json.loads(x.get_json()) for x in self.measures]
         data.insert(0, self.section_name)
         return json.dumps(data)
 
@@ -110,6 +116,7 @@ class Measure(object):
     def __init__(self, text):
         self.text = text
         self.chords = []
+        self.double_barline = False
         self.parse_text()
 
     def parse_text(self):
@@ -117,8 +124,8 @@ class Measure(object):
         for i in new_chords:
             self.chords.append(Chord(i))
         
-    def get_json(self, transpose=0):
-        data = [json.loads(x.get_json(transpose=transpose)) for x in self.chords]
+    def get_json(self):
+        data = [json.loads(x.get_json()) for x in self.chords]
         return json.dumps(data)
             
     def __repr__(self):
@@ -128,12 +135,16 @@ class Measure(object):
 
 class Chord(object):
     SPACE = '&nbsp;'
-    MAJOR_SYMBOL = '&#x25B3;'
+    MAJOR_SYMBOL = '&#x25B5;'
     MINOR_SYMBOL = '-'
     DIM_SYMBOL = '&#x25E6;'
     HALF_DIM_SYMBOL = '&oslash;'
     FLAT_SIGN = '&#x266d;'
     SHARP_SIGN = '&#x266f;'
+    SHARP_NOTES = ('C','C'+SHARP_SIGN,'D','D'+SHARP_SIGN,'E','F',
+                   'F'+SHARP_SIGN,'G','G'+SHARP_SIGN,'A','A'+SHARP_SIGN,'B')
+    FLAT_NOTES = ('C','D'+FLAT_SIGN,'D','E'+FLAT_SIGN,'E','F',
+                  'G'+FLAT_SIGN,'G','A'+FLAT_SIGN,'A','B'+FLAT_SIGN,'B')
 
     def __init__(self, text):
         self.text = text
@@ -177,19 +188,51 @@ class Chord(object):
         self.quality = self.quality.replace('maj', self.MAJOR_SYMBOL)
         self.quality = self.quality.replace('min', self.MINOR_SYMBOL)
         self.quality = self.quality.replace('-7'+self.FLAT_SIGN+'5', self.HALF_DIM_SYMBOL+'7')
+        self.quality = self.quality.replace('dim', self.DIM_SYMBOL)
         if self.slashnote:
             self.slashnote = self.slashnote.replace('#', self.SHARP_SIGN)
             self.slashnote = self.slashnote.replace('b', self.FLAT_SIGN)
             
-    def get_json(self, transpose=0):
+    def get_json(self):
         # There's got to be a more elegant way to do this:
         return json.dumps(
             {'rootnote': self.rootnote,
              'quality': self.quality,
              'slashnote': self.slashnote})
 
-    def transpose(self, note, transpose):
-        return note
+    def transpose(self, semitones):
+        # TODO: clean this up
+        semitones = int(semitones) % 12
+        if self.rootnote == self.SPACE:
+            return
+        try:
+            note_index = self.SHARP_NOTES.index(self.rootnote)
+            new_index = (note_index + semitones) % len(self.SHARP_NOTES)
+            self.rootnote = self.SHARP_NOTES[new_index]
+        except ValueError:
+            try:
+                note_index = self.FLAT_NOTES.index(self.rootnote)
+                new_index = (note_index + semitones) % len(self.FLAT_NOTES)                
+                self.rootnote = self.FLAT_NOTES[new_index]                
+            except ValueError:
+                raise TransposeError('Couldn\'t find',self.rootnote,'in list of notes')
+                
+
+        if self.slashnote:
+            try:
+                note_index = self.SHARP_NOTES.index(self.slashnote)
+                new_index = (note_index + semitones) % len(self.SHARP_NOTES)
+                self.slashnote = self.SHARP_NOTES[new_index]
+            except ValueError:
+                try:
+                    note_index = self.FLAT_NOTES.index(self.slashnote)
+                    new_index = (note_index + semitones) % len(self.FLAT_NOTES)                
+                    self.slashnote = self.FLAT_NOTES[new_index]                
+                except ValueError:
+                    raise TransposeError('Couldn\'t find',self.slashnote,'in list of notes')
+
+
+        
     
     def __repr__(self):
         return 'Chord(\'%s\')' % self.text
@@ -198,3 +241,5 @@ class Chord(object):
         return self.text
 
 
+class TransposeError(Exception):
+    pass
