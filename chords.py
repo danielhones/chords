@@ -17,7 +17,7 @@ START_MEASURE_RE = re.compile(r'\|{0,1}[A-G.][#b]{0,1}')
 START_SECTION_RE = re.compile(r'\((?P<sectionname>\w+)\)')
 
 
-class ChordChartMaker(object):
+class Song(object):
     def __init__(self, raw_text):
         self.metadata = {
             'title': '',
@@ -41,23 +41,23 @@ class ChordChartMaker(object):
                 next_line = self.lines.popleft()
             except IndexError:
                 # Deque is empty
-                return 
+                return
             if START_SECTION_RE.match(next_line) or START_MEASURE_RE.match(next_line):
                 self.lines.appendleft(next_line)
                 new_section = SongSection(self.lines)  # This mutates the deque
                 self.sections.append(new_section)
-        
+
     def parse_metadata(self):
-        match = HEADER_RE.match( self.lines[0] )
+        match = HEADER_RE.match(self.lines[0])
         while match:
             label = match.group('label').lower()
             value = match.group('value')
             self.metadata[label] = value
             self.lines.popleft()
-            match = HEADER_RE.match( self.lines[0] )
+            match = HEADER_RE.match(self.lines[0])
 
     def __repr__(self):
-        return 'ChordChart(\'%s\')' % self.text
+        return 'Song(\'%s\')' % self.text
 
     def __str__(self):
         return self.metadata['title']
@@ -76,7 +76,7 @@ class ChordChartMaker(object):
             {'metadata': self.metadata,
              'chart': data},
             indent=indent)
-    
+
 
 class SongSection(object):
     def __init__(self, lines):
@@ -111,7 +111,6 @@ class SongSection(object):
         return json.dumps(data)
 
 
-                    
 class Measure(object):
     def __init__(self, text):
         self.text = text
@@ -130,7 +129,6 @@ class Measure(object):
             
     def __repr__(self):
         return 'Measure(\'%s\')' % self.text
-        
 
 
 class Chord(object):
@@ -141,15 +139,15 @@ class Chord(object):
     HALF_DIM_SYMBOL = '&oslash;'
     FLAT_SIGN = '&#x266d;'
     SHARP_SIGN = '&#x266f;'
-    SHARP_NOTES = ('C','C'+SHARP_SIGN,'D','D'+SHARP_SIGN,'E','F',
-                   'F'+SHARP_SIGN,'G','G'+SHARP_SIGN,'A','A'+SHARP_SIGN,'B')
-    FLAT_NOTES = ('C','D'+FLAT_SIGN,'D','E'+FLAT_SIGN,'E','F',
-                  'G'+FLAT_SIGN,'G','A'+FLAT_SIGN,'A','B'+FLAT_SIGN,'B')
+    SHARP_NOTES = ('C', 'C' + SHARP_SIGN, 'D', 'D' + SHARP_SIGN, 'E', 'F',
+                   'F' + SHARP_SIGN, 'G', 'G' + SHARP_SIGN, 'A', 'A' + SHARP_SIGN, 'B')
+    FLAT_NOTES = ('C', 'D' + FLAT_SIGN, 'D', 'E' + FLAT_SIGN, 'E', 'F',
+                  'G' + FLAT_SIGN, 'G', 'A' + FLAT_SIGN, 'A', 'B' + FLAT_SIGN, 'B')
 
     def __init__(self, text):
         self.text = text
         self.parse_text()
-        
+
     def parse_text(self):
         # TODO: clean this up a bit
         if self.text == '.':
@@ -157,6 +155,7 @@ class Chord(object):
             self.quality = ''
             self.slashnote = None
             return
+        # TODO: Finish this edit, whatever it was:
         root_and_quality_re = re.compile(
             '''
             (?P<rootnote>[A-G][#b]{0,1})
@@ -177,7 +176,6 @@ class Chord(object):
 
     def prettify(self):
         # TODO: Make this not suck so bad.
-        attrs = ['rootnote', 'quality']
         self.rootnote = self.rootnote.replace('#', self.SHARP_SIGN)
         self.rootnote = self.rootnote.replace('b', self.FLAT_SIGN)
         self.quality = self.quality.replace('#', self.SHARP_SIGN)
@@ -192,7 +190,7 @@ class Chord(object):
         if self.slashnote:
             self.slashnote = self.slashnote.replace('#', self.SHARP_SIGN)
             self.slashnote = self.slashnote.replace('b', self.FLAT_SIGN)
-            
+
     def get_json(self):
         # There's got to be a more elegant way to do this:
         return json.dumps(
