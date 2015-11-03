@@ -5,9 +5,9 @@ _tabversion = '3.5'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'A7C8E65281688BDED291A94643D4BC3D'
+_lr_signature = '50D5E998A728EB1EBAABF313FBE7718F'
     
-_lr_action_items = {'NOTE':([0,],[1,]),'TRIAD_QUALITY':([1,],[3,]),'$end':([1,2,3,],[-1,0,-2,]),}
+_lr_action_items = {'DOUBLE_BARLINE':([2,4,5,6,7,8,9,10,11,12,13,15,16,18,20,21,22,23,24,25,28,29,30,31,32,33,],[5,5,-9,-13,-15,-16,-11,-24,5,-5,-14,-10,-8,-4,-25,-12,-6,-21,-19,-20,5,-18,-22,-23,-17,-7,]),'SEVEN':([10,13,20,26,],[-24,24,-25,30,]),'UPPER_STRUCTURE':([10,13,20,26,],[-24,23,-25,31,]),'SIX':([10,13,20,],[-24,25,-25,]),'RIGHT_REPEAT':([2,4,5,6,7,8,9,10,11,12,13,15,16,18,20,21,22,23,24,25,28,29,30,31,32,33,],[9,9,-9,-13,-15,-16,-11,-24,9,-5,-14,-10,-8,-4,-25,-12,-6,-21,-19,-20,9,-18,-22,-23,-17,-7,]),'SEVENTH_QUALITY':([10,13,20,],[-24,26,-25,]),'NOTE':([2,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,21,22,23,24,25,27,28,29,30,31,32,33,],[10,10,-9,-13,-15,-16,-11,-24,10,-5,-14,10,-10,-8,-4,29,-25,-12,-6,-21,-19,-20,32,10,-18,-22,-23,-17,-7,]),'SECTION_NAME':([0,1,3,4,5,9,12,15,16,17,18,22,33,],[2,-2,2,-3,-9,-11,-5,-10,-8,-1,-4,-6,-7,]),'SLASH':([7,10,13,20,23,24,25,30,31,],[19,-24,27,-25,-21,-19,-20,-22,-23,]),'SINGLE_BARLINE':([2,4,5,6,7,8,9,10,11,12,13,15,16,18,20,21,22,23,24,25,28,29,30,31,32,33,],[16,16,-9,-13,-15,-16,-11,-24,16,-5,-14,-10,-8,-4,-25,-12,-6,-21,-19,-20,16,-18,-22,-23,-17,-7,]),'TRIAD_QUALITY':([10,],[20,]),'LEFT_REPEAT':([2,4,5,6,7,8,9,10,11,12,13,15,16,18,20,21,22,23,24,25,28,29,30,31,32,33,],[15,15,-9,-13,-15,-16,-11,-24,15,-5,-14,-10,-8,-4,-25,-12,-6,-21,-19,-20,15,-18,-22,-23,-17,-7,]),'$end':([1,3,4,5,9,12,15,16,17,18,22,33,],[-2,0,-3,-9,-11,-5,-10,-8,-1,-4,-6,-7,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'triad':([0,],[2,]),}
+_lr_goto_items = {'measure_sequence':([2,],[4,]),'chord':([2,4,11,14,28,],[6,6,21,6,21,]),'song':([0,],[3,]),'seventh_chord':([2,4,11,14,28,],[7,7,7,7,7,]),'section':([0,3,],[1,17,]),'measure':([2,4,],[12,18,]),'chord_sequence':([2,4,14,],[11,11,28,]),'slash_chord':([2,4,11,14,28,],[8,8,8,8,8,]),'triad':([2,4,11,14,28,],[13,13,13,13,13,]),'barline':([2,4,11,28,],[14,14,22,33,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -25,7 +25,30 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> triad","S'",1,None,None,None),
-  ('triad -> NOTE','triad',1,'p_triad','chords_parser.py',6),
-  ('triad -> NOTE TRIAD_QUALITY','triad',2,'p_triad','chords_parser.py',7),
+  ("S' -> song","S'",1,None,None,None),
+  ('song -> song section','song',2,'p_song','chords_parser.py',9),
+  ('song -> section','song',1,'p_song','chords_parser.py',10),
+  ('section -> SECTION_NAME measure_sequence','section',2,'p_section','chords_parser.py',20),
+  ('measure_sequence -> measure_sequence measure','measure_sequence',2,'p_measure_sequence','chords_parser.py',27),
+  ('measure_sequence -> measure','measure_sequence',1,'p_measure_sequence','chords_parser.py',28),
+  ('measure -> chord_sequence barline','measure',2,'p_measure','chords_parser.py',41),
+  ('measure -> barline chord_sequence barline','measure',3,'p_measure','chords_parser.py',42),
+  ('barline -> SINGLE_BARLINE','barline',1,'p_barline','chords_parser.py',51),
+  ('barline -> DOUBLE_BARLINE','barline',1,'p_barline','chords_parser.py',52),
+  ('barline -> LEFT_REPEAT','barline',1,'p_barline','chords_parser.py',53),
+  ('barline -> RIGHT_REPEAT','barline',1,'p_barline','chords_parser.py',54),
+  ('chord_sequence -> chord_sequence chord','chord_sequence',2,'p_chord_sequence','chords_parser.py',59),
+  ('chord_sequence -> chord','chord_sequence',1,'p_chord_sequence','chords_parser.py',60),
+  ('chord -> triad','chord',1,'p_chord','chords_parser.py',70),
+  ('chord -> seventh_chord','chord',1,'p_chord','chords_parser.py',71),
+  ('chord -> slash_chord','chord',1,'p_chord','chords_parser.py',72),
+  ('slash_chord -> triad SLASH NOTE','slash_chord',3,'p_slash_chord','chords_parser.py',78),
+  ('slash_chord -> seventh_chord SLASH NOTE','slash_chord',3,'p_slash_chord','chords_parser.py',79),
+  ('seventh_chord -> triad SEVEN','seventh_chord',2,'p_seventh_chord','chords_parser.py',87),
+  ('seventh_chord -> triad SIX','seventh_chord',2,'p_seventh_chord','chords_parser.py',88),
+  ('seventh_chord -> triad UPPER_STRUCTURE','seventh_chord',2,'p_seventh_chord','chords_parser.py',89),
+  ('seventh_chord -> triad SEVENTH_QUALITY SEVEN','seventh_chord',3,'p_seventh_chord','chords_parser.py',90),
+  ('seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE','seventh_chord',3,'p_seventh_chord','chords_parser.py',91),
+  ('triad -> NOTE','triad',1,'p_triad','chords_parser.py',102),
+  ('triad -> NOTE TRIAD_QUALITY','triad',2,'p_triad','chords_parser.py',103),
 ]

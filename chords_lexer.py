@@ -1,3 +1,5 @@
+import ply.lex as lex
+
 tokens = (
     'NOTE',
     'TRIAD_QUALITY',
@@ -11,23 +13,23 @@ tokens = (
     'RIGHT_REPEAT',
     'LEFT_REPEAT',
     'SECTION_NAME',
-    'SPACE',
+    #'NEWLINE',
 )
-# TODO: Figure out the best, most specific regex for upper structure
+# TODO: Add newline, and add '.' or something to indicate a blank measure where a chord is repeated from
+# the previous measure
 t_TRIAD_QUALITY = r'min|mi|m|\-|dim|o|\+|aug|5'
 t_NOTE = r'[A-G][#b]?'
 t_SIX = r'6'
 t_SEVEN = r'7'
-t_UPPER_STRUCTURE = r'[b#]?9|[b#]?11|[b#]?13|[b#]5|sus4|sus2|alt|ALT|Alt'
+t_UPPER_STRUCTURE = r'([b#]?9|[b#]?11|[b#]?13|[b#]5|sus4|sus2|alt|ALT|Alt)+'
 t_SLASH = r'/'
 t_SINGLE_BARLINE = r'\|'
 t_DOUBLE_BARLINE = r'\|\|'
 t_RIGHT_REPEAT = r':\|\|'
 t_LEFT_REPEAT = r'\|\|:'
-t_SECTION_NAME = r'\(.+\)'
-t_SPACE = ' \t'
+#t_NEWLINE = '\n'  # And define a rule in the parser that barline = barline newline barline
 
-t_ignore = '\n'
+t_ignore = ' \t\n'
 
 
 # This needs to be before TRIAD_QUALITY because TRIAD_QUALITY matches 'm'
@@ -36,6 +38,15 @@ def t_SEVENTH_QUALITY(t):
     return t
 
 
+def t_SECTION_NAME(t):
+    r'\((?P<name>.*)\)'
+    t.value = t.lexer.lexmatch.group('name')
+    return t
+
+
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
+
+
+lexer = lex.lex()

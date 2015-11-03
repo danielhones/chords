@@ -2,59 +2,583 @@ Created by PLY version 3.6 (http://www.dabeaz.com/ply)
 
 Grammar
 
-Rule 0     S' -> triad
-Rule 1     triad -> NOTE
-Rule 2     triad -> NOTE TRIAD_QUALITY
-Rule 3     seventh -> SEVEN
-Rule 4     seventh -> SEVENTH_QUALITY SEVEN
-Rule 5     seventh -> SEVENTH_QUALITY UPPER_STRUCTURE
-Rule 6     seventh -> SIX
-Rule 7     seventh_chord -> triad seventh
-Rule 8     seventh_chord -> triad seventh UPPER_STRUCTURE
-Rule 9     chord -> triad
-Rule 10    chord -> seventh_chord
-Rule 11    slash_chord -> root_chord SLASH NOTE
-Rule 12    chord -> root_chord SPACE
-Rule 13    chord -> slash_chord SPACE
-Rule 14    chord_sequence -> chord
-Rule 15    chord_sequence -> chord chord_sequence
-Rule 16    barline -> SINGLE_BARLINE
-Rule 17    barline -> DOUBLE_BARLINE
-Rule 18    barline -> LEFT_REPEAT
-Rule 19    barline -> RIGHT_REPEAT
-Rule 20    measure -> chord_sequence barline
-Rule 21    measure -> barline chord_sequence barline
-Rule 22    section -> SECTION_NAME section
-Rule 23    section -> measure section
-Rule 24    section -> measure DOUBLE_BARLINE
+Rule 0     S' -> song
+Rule 1     song -> song section
+Rule 2     song -> section
+Rule 3     section -> SECTION_NAME measure_sequence
+Rule 4     measure_sequence -> measure_sequence measure
+Rule 5     measure_sequence -> measure
+Rule 6     measure -> chord_sequence barline
+Rule 7     measure -> barline chord_sequence barline
+Rule 8     barline -> SINGLE_BARLINE
+Rule 9     barline -> DOUBLE_BARLINE
+Rule 10    barline -> LEFT_REPEAT
+Rule 11    barline -> RIGHT_REPEAT
+Rule 12    chord_sequence -> chord_sequence chord
+Rule 13    chord_sequence -> chord
+Rule 14    chord -> triad
+Rule 15    chord -> seventh_chord
+Rule 16    chord -> slash_chord
+Rule 17    slash_chord -> triad SLASH NOTE
+Rule 18    slash_chord -> seventh_chord SLASH NOTE
+Rule 19    seventh_chord -> triad SEVEN
+Rule 20    seventh_chord -> triad SIX
+Rule 21    seventh_chord -> triad UPPER_STRUCTURE
+Rule 22    seventh_chord -> triad SEVENTH_QUALITY SEVEN
+Rule 23    seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE
+Rule 24    triad -> NOTE
+Rule 25    triad -> NOTE TRIAD_QUALITY
 
 Terminals, with rules where they appear
 
-DOUBLE_BARLINE       : 17 24
-LEFT_REPEAT          : 18
-NOTE                 : 1 2 11
-RIGHT_REPEAT         : 19
-SECTION_NAME         : 22
-SEVEN                : 3 4
-SEVENTH_QUALITY      : 4 5
-SINGLE_BARLINE       : 16
-SIX                  : 6
-SLASH                : 11
-SPACE                : 12 13
-TRIAD_QUALITY        : 2
-UPPER_STRUCTURE      : 5 8
+DOUBLE_BARLINE       : 9
+LEFT_REPEAT          : 10
+NOTE                 : 17 18 24 25
+RIGHT_REPEAT         : 11
+SECTION_NAME         : 3
+SEVEN                : 19 22
+SEVENTH_QUALITY      : 22 23
+SINGLE_BARLINE       : 8
+SIX                  : 20
+SLASH                : 17 18
+TRIAD_QUALITY        : 25
+UPPER_STRUCTURE      : 21 23
 error                : 
 
 Nonterminals, with rules where they appear
 
-barline              : 20 21 21
-chord                : 14 15
-chord_sequence       : 15 20 21
-measure              : 23 24
-root_chord           : 11 12
-section              : 22 23
-seventh              : 7 8
-seventh_chord        : 10
-slash_chord          : 13
-triad                : 7 8 9 0
+barline              : 6 7 7
+chord                : 12 13
+chord_sequence       : 6 7 12
+measure              : 4 5
+measure_sequence     : 3 4
+section              : 1 2
+seventh_chord        : 15 18
+slash_chord          : 16
+song                 : 1 0
+triad                : 14 17 19 20 21 22 23
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . song
+    (1) song -> . song section
+    (2) song -> . section
+    (3) section -> . SECTION_NAME measure_sequence
+
+    SECTION_NAME    shift and go to state 2
+
+    section                        shift and go to state 1
+    song                           shift and go to state 3
+
+state 1
+
+    (2) song -> section .
+
+    SECTION_NAME    reduce using rule 2 (song -> section .)
+    $end            reduce using rule 2 (song -> section .)
+
+
+state 2
+
+    (3) section -> SECTION_NAME . measure_sequence
+    (4) measure_sequence -> . measure_sequence measure
+    (5) measure_sequence -> . measure
+    (6) measure -> . chord_sequence barline
+    (7) measure -> . barline chord_sequence barline
+    (12) chord_sequence -> . chord_sequence chord
+    (13) chord_sequence -> . chord
+    (8) barline -> . SINGLE_BARLINE
+    (9) barline -> . DOUBLE_BARLINE
+    (10) barline -> . LEFT_REPEAT
+    (11) barline -> . RIGHT_REPEAT
+    (14) chord -> . triad
+    (15) chord -> . seventh_chord
+    (16) chord -> . slash_chord
+    (24) triad -> . NOTE
+    (25) triad -> . NOTE TRIAD_QUALITY
+    (19) seventh_chord -> . triad SEVEN
+    (20) seventh_chord -> . triad SIX
+    (21) seventh_chord -> . triad UPPER_STRUCTURE
+    (22) seventh_chord -> . triad SEVENTH_QUALITY SEVEN
+    (23) seventh_chord -> . triad SEVENTH_QUALITY UPPER_STRUCTURE
+    (17) slash_chord -> . triad SLASH NOTE
+    (18) slash_chord -> . seventh_chord SLASH NOTE
+
+    SINGLE_BARLINE  shift and go to state 16
+    DOUBLE_BARLINE  shift and go to state 5
+    LEFT_REPEAT     shift and go to state 15
+    RIGHT_REPEAT    shift and go to state 9
+    NOTE            shift and go to state 10
+
+    measure_sequence               shift and go to state 4
+    chord                          shift and go to state 6
+    seventh_chord                  shift and go to state 7
+    slash_chord                    shift and go to state 8
+    chord_sequence                 shift and go to state 11
+    measure                        shift and go to state 12
+    triad                          shift and go to state 13
+    barline                        shift and go to state 14
+
+state 3
+
+    (0) S' -> song .
+    (1) song -> song . section
+    (3) section -> . SECTION_NAME measure_sequence
+
+    SECTION_NAME    shift and go to state 2
+
+    section                        shift and go to state 17
+
+state 4
+
+    (3) section -> SECTION_NAME measure_sequence .
+    (4) measure_sequence -> measure_sequence . measure
+    (6) measure -> . chord_sequence barline
+    (7) measure -> . barline chord_sequence barline
+    (12) chord_sequence -> . chord_sequence chord
+    (13) chord_sequence -> . chord
+    (8) barline -> . SINGLE_BARLINE
+    (9) barline -> . DOUBLE_BARLINE
+    (10) barline -> . LEFT_REPEAT
+    (11) barline -> . RIGHT_REPEAT
+    (14) chord -> . triad
+    (15) chord -> . seventh_chord
+    (16) chord -> . slash_chord
+    (24) triad -> . NOTE
+    (25) triad -> . NOTE TRIAD_QUALITY
+    (19) seventh_chord -> . triad SEVEN
+    (20) seventh_chord -> . triad SIX
+    (21) seventh_chord -> . triad UPPER_STRUCTURE
+    (22) seventh_chord -> . triad SEVENTH_QUALITY SEVEN
+    (23) seventh_chord -> . triad SEVENTH_QUALITY UPPER_STRUCTURE
+    (17) slash_chord -> . triad SLASH NOTE
+    (18) slash_chord -> . seventh_chord SLASH NOTE
+
+    SECTION_NAME    reduce using rule 3 (section -> SECTION_NAME measure_sequence .)
+    $end            reduce using rule 3 (section -> SECTION_NAME measure_sequence .)
+    SINGLE_BARLINE  shift and go to state 16
+    DOUBLE_BARLINE  shift and go to state 5
+    LEFT_REPEAT     shift and go to state 15
+    RIGHT_REPEAT    shift and go to state 9
+    NOTE            shift and go to state 10
+
+    chord                          shift and go to state 6
+    seventh_chord                  shift and go to state 7
+    slash_chord                    shift and go to state 8
+    chord_sequence                 shift and go to state 11
+    measure                        shift and go to state 18
+    triad                          shift and go to state 13
+    barline                        shift and go to state 14
+
+state 5
+
+    (9) barline -> DOUBLE_BARLINE .
+
+    SINGLE_BARLINE  reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+    DOUBLE_BARLINE  reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+    LEFT_REPEAT     reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+    RIGHT_REPEAT    reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+    NOTE            reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+    SECTION_NAME    reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+    $end            reduce using rule 9 (barline -> DOUBLE_BARLINE .)
+
+
+state 6
+
+    (13) chord_sequence -> chord .
+
+    SINGLE_BARLINE  reduce using rule 13 (chord_sequence -> chord .)
+    DOUBLE_BARLINE  reduce using rule 13 (chord_sequence -> chord .)
+    LEFT_REPEAT     reduce using rule 13 (chord_sequence -> chord .)
+    RIGHT_REPEAT    reduce using rule 13 (chord_sequence -> chord .)
+    NOTE            reduce using rule 13 (chord_sequence -> chord .)
+
+
+state 7
+
+    (15) chord -> seventh_chord .
+    (18) slash_chord -> seventh_chord . SLASH NOTE
+
+    SINGLE_BARLINE  reduce using rule 15 (chord -> seventh_chord .)
+    DOUBLE_BARLINE  reduce using rule 15 (chord -> seventh_chord .)
+    LEFT_REPEAT     reduce using rule 15 (chord -> seventh_chord .)
+    RIGHT_REPEAT    reduce using rule 15 (chord -> seventh_chord .)
+    NOTE            reduce using rule 15 (chord -> seventh_chord .)
+    SLASH           shift and go to state 19
+
+
+state 8
+
+    (16) chord -> slash_chord .
+
+    SINGLE_BARLINE  reduce using rule 16 (chord -> slash_chord .)
+    DOUBLE_BARLINE  reduce using rule 16 (chord -> slash_chord .)
+    LEFT_REPEAT     reduce using rule 16 (chord -> slash_chord .)
+    RIGHT_REPEAT    reduce using rule 16 (chord -> slash_chord .)
+    NOTE            reduce using rule 16 (chord -> slash_chord .)
+
+
+state 9
+
+    (11) barline -> RIGHT_REPEAT .
+
+    SINGLE_BARLINE  reduce using rule 11 (barline -> RIGHT_REPEAT .)
+    DOUBLE_BARLINE  reduce using rule 11 (barline -> RIGHT_REPEAT .)
+    LEFT_REPEAT     reduce using rule 11 (barline -> RIGHT_REPEAT .)
+    RIGHT_REPEAT    reduce using rule 11 (barline -> RIGHT_REPEAT .)
+    NOTE            reduce using rule 11 (barline -> RIGHT_REPEAT .)
+    SECTION_NAME    reduce using rule 11 (barline -> RIGHT_REPEAT .)
+    $end            reduce using rule 11 (barline -> RIGHT_REPEAT .)
+
+
+state 10
+
+    (24) triad -> NOTE .
+    (25) triad -> NOTE . TRIAD_QUALITY
+
+    SEVEN           reduce using rule 24 (triad -> NOTE .)
+    SIX             reduce using rule 24 (triad -> NOTE .)
+    UPPER_STRUCTURE reduce using rule 24 (triad -> NOTE .)
+    SEVENTH_QUALITY reduce using rule 24 (triad -> NOTE .)
+    SLASH           reduce using rule 24 (triad -> NOTE .)
+    SINGLE_BARLINE  reduce using rule 24 (triad -> NOTE .)
+    DOUBLE_BARLINE  reduce using rule 24 (triad -> NOTE .)
+    LEFT_REPEAT     reduce using rule 24 (triad -> NOTE .)
+    RIGHT_REPEAT    reduce using rule 24 (triad -> NOTE .)
+    NOTE            reduce using rule 24 (triad -> NOTE .)
+    TRIAD_QUALITY   shift and go to state 20
+
+
+state 11
+
+    (6) measure -> chord_sequence . barline
+    (12) chord_sequence -> chord_sequence . chord
+    (8) barline -> . SINGLE_BARLINE
+    (9) barline -> . DOUBLE_BARLINE
+    (10) barline -> . LEFT_REPEAT
+    (11) barline -> . RIGHT_REPEAT
+    (14) chord -> . triad
+    (15) chord -> . seventh_chord
+    (16) chord -> . slash_chord
+    (24) triad -> . NOTE
+    (25) triad -> . NOTE TRIAD_QUALITY
+    (19) seventh_chord -> . triad SEVEN
+    (20) seventh_chord -> . triad SIX
+    (21) seventh_chord -> . triad UPPER_STRUCTURE
+    (22) seventh_chord -> . triad SEVENTH_QUALITY SEVEN
+    (23) seventh_chord -> . triad SEVENTH_QUALITY UPPER_STRUCTURE
+    (17) slash_chord -> . triad SLASH NOTE
+    (18) slash_chord -> . seventh_chord SLASH NOTE
+
+    SINGLE_BARLINE  shift and go to state 16
+    DOUBLE_BARLINE  shift and go to state 5
+    LEFT_REPEAT     shift and go to state 15
+    RIGHT_REPEAT    shift and go to state 9
+    NOTE            shift and go to state 10
+
+    chord                          shift and go to state 21
+    seventh_chord                  shift and go to state 7
+    slash_chord                    shift and go to state 8
+    triad                          shift and go to state 13
+    barline                        shift and go to state 22
+
+state 12
+
+    (5) measure_sequence -> measure .
+
+    SINGLE_BARLINE  reduce using rule 5 (measure_sequence -> measure .)
+    DOUBLE_BARLINE  reduce using rule 5 (measure_sequence -> measure .)
+    LEFT_REPEAT     reduce using rule 5 (measure_sequence -> measure .)
+    RIGHT_REPEAT    reduce using rule 5 (measure_sequence -> measure .)
+    NOTE            reduce using rule 5 (measure_sequence -> measure .)
+    SECTION_NAME    reduce using rule 5 (measure_sequence -> measure .)
+    $end            reduce using rule 5 (measure_sequence -> measure .)
+
+
+state 13
+
+    (14) chord -> triad .
+    (19) seventh_chord -> triad . SEVEN
+    (20) seventh_chord -> triad . SIX
+    (21) seventh_chord -> triad . UPPER_STRUCTURE
+    (22) seventh_chord -> triad . SEVENTH_QUALITY SEVEN
+    (23) seventh_chord -> triad . SEVENTH_QUALITY UPPER_STRUCTURE
+    (17) slash_chord -> triad . SLASH NOTE
+
+    SINGLE_BARLINE  reduce using rule 14 (chord -> triad .)
+    DOUBLE_BARLINE  reduce using rule 14 (chord -> triad .)
+    LEFT_REPEAT     reduce using rule 14 (chord -> triad .)
+    RIGHT_REPEAT    reduce using rule 14 (chord -> triad .)
+    NOTE            reduce using rule 14 (chord -> triad .)
+    SEVEN           shift and go to state 24
+    SIX             shift and go to state 25
+    UPPER_STRUCTURE shift and go to state 23
+    SEVENTH_QUALITY shift and go to state 26
+    SLASH           shift and go to state 27
+
+
+state 14
+
+    (7) measure -> barline . chord_sequence barline
+    (12) chord_sequence -> . chord_sequence chord
+    (13) chord_sequence -> . chord
+    (14) chord -> . triad
+    (15) chord -> . seventh_chord
+    (16) chord -> . slash_chord
+    (24) triad -> . NOTE
+    (25) triad -> . NOTE TRIAD_QUALITY
+    (19) seventh_chord -> . triad SEVEN
+    (20) seventh_chord -> . triad SIX
+    (21) seventh_chord -> . triad UPPER_STRUCTURE
+    (22) seventh_chord -> . triad SEVENTH_QUALITY SEVEN
+    (23) seventh_chord -> . triad SEVENTH_QUALITY UPPER_STRUCTURE
+    (17) slash_chord -> . triad SLASH NOTE
+    (18) slash_chord -> . seventh_chord SLASH NOTE
+
+    NOTE            shift and go to state 10
+
+    chord                          shift and go to state 6
+    seventh_chord                  shift and go to state 7
+    chord_sequence                 shift and go to state 28
+    slash_chord                    shift and go to state 8
+    triad                          shift and go to state 13
+
+state 15
+
+    (10) barline -> LEFT_REPEAT .
+
+    SINGLE_BARLINE  reduce using rule 10 (barline -> LEFT_REPEAT .)
+    DOUBLE_BARLINE  reduce using rule 10 (barline -> LEFT_REPEAT .)
+    LEFT_REPEAT     reduce using rule 10 (barline -> LEFT_REPEAT .)
+    RIGHT_REPEAT    reduce using rule 10 (barline -> LEFT_REPEAT .)
+    NOTE            reduce using rule 10 (barline -> LEFT_REPEAT .)
+    SECTION_NAME    reduce using rule 10 (barline -> LEFT_REPEAT .)
+    $end            reduce using rule 10 (barline -> LEFT_REPEAT .)
+
+
+state 16
+
+    (8) barline -> SINGLE_BARLINE .
+
+    SINGLE_BARLINE  reduce using rule 8 (barline -> SINGLE_BARLINE .)
+    DOUBLE_BARLINE  reduce using rule 8 (barline -> SINGLE_BARLINE .)
+    LEFT_REPEAT     reduce using rule 8 (barline -> SINGLE_BARLINE .)
+    RIGHT_REPEAT    reduce using rule 8 (barline -> SINGLE_BARLINE .)
+    NOTE            reduce using rule 8 (barline -> SINGLE_BARLINE .)
+    SECTION_NAME    reduce using rule 8 (barline -> SINGLE_BARLINE .)
+    $end            reduce using rule 8 (barline -> SINGLE_BARLINE .)
+
+
+state 17
+
+    (1) song -> song section .
+
+    SECTION_NAME    reduce using rule 1 (song -> song section .)
+    $end            reduce using rule 1 (song -> song section .)
+
+
+state 18
+
+    (4) measure_sequence -> measure_sequence measure .
+
+    SINGLE_BARLINE  reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+    DOUBLE_BARLINE  reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+    LEFT_REPEAT     reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+    RIGHT_REPEAT    reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+    NOTE            reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+    SECTION_NAME    reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+    $end            reduce using rule 4 (measure_sequence -> measure_sequence measure .)
+
+
+state 19
+
+    (18) slash_chord -> seventh_chord SLASH . NOTE
+
+    NOTE            shift and go to state 29
+
+
+state 20
+
+    (25) triad -> NOTE TRIAD_QUALITY .
+
+    SEVEN           reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    SIX             reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    UPPER_STRUCTURE reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    SEVENTH_QUALITY reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    SLASH           reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    SINGLE_BARLINE  reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    DOUBLE_BARLINE  reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    LEFT_REPEAT     reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    RIGHT_REPEAT    reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+    NOTE            reduce using rule 25 (triad -> NOTE TRIAD_QUALITY .)
+
+
+state 21
+
+    (12) chord_sequence -> chord_sequence chord .
+
+    SINGLE_BARLINE  reduce using rule 12 (chord_sequence -> chord_sequence chord .)
+    DOUBLE_BARLINE  reduce using rule 12 (chord_sequence -> chord_sequence chord .)
+    LEFT_REPEAT     reduce using rule 12 (chord_sequence -> chord_sequence chord .)
+    RIGHT_REPEAT    reduce using rule 12 (chord_sequence -> chord_sequence chord .)
+    NOTE            reduce using rule 12 (chord_sequence -> chord_sequence chord .)
+
+
+state 22
+
+    (6) measure -> chord_sequence barline .
+
+    SINGLE_BARLINE  reduce using rule 6 (measure -> chord_sequence barline .)
+    DOUBLE_BARLINE  reduce using rule 6 (measure -> chord_sequence barline .)
+    LEFT_REPEAT     reduce using rule 6 (measure -> chord_sequence barline .)
+    RIGHT_REPEAT    reduce using rule 6 (measure -> chord_sequence barline .)
+    NOTE            reduce using rule 6 (measure -> chord_sequence barline .)
+    SECTION_NAME    reduce using rule 6 (measure -> chord_sequence barline .)
+    $end            reduce using rule 6 (measure -> chord_sequence barline .)
+
+
+state 23
+
+    (21) seventh_chord -> triad UPPER_STRUCTURE .
+
+    SLASH           reduce using rule 21 (seventh_chord -> triad UPPER_STRUCTURE .)
+    SINGLE_BARLINE  reduce using rule 21 (seventh_chord -> triad UPPER_STRUCTURE .)
+    DOUBLE_BARLINE  reduce using rule 21 (seventh_chord -> triad UPPER_STRUCTURE .)
+    LEFT_REPEAT     reduce using rule 21 (seventh_chord -> triad UPPER_STRUCTURE .)
+    RIGHT_REPEAT    reduce using rule 21 (seventh_chord -> triad UPPER_STRUCTURE .)
+    NOTE            reduce using rule 21 (seventh_chord -> triad UPPER_STRUCTURE .)
+
+
+state 24
+
+    (19) seventh_chord -> triad SEVEN .
+
+    SLASH           reduce using rule 19 (seventh_chord -> triad SEVEN .)
+    SINGLE_BARLINE  reduce using rule 19 (seventh_chord -> triad SEVEN .)
+    DOUBLE_BARLINE  reduce using rule 19 (seventh_chord -> triad SEVEN .)
+    LEFT_REPEAT     reduce using rule 19 (seventh_chord -> triad SEVEN .)
+    RIGHT_REPEAT    reduce using rule 19 (seventh_chord -> triad SEVEN .)
+    NOTE            reduce using rule 19 (seventh_chord -> triad SEVEN .)
+
+
+state 25
+
+    (20) seventh_chord -> triad SIX .
+
+    SLASH           reduce using rule 20 (seventh_chord -> triad SIX .)
+    SINGLE_BARLINE  reduce using rule 20 (seventh_chord -> triad SIX .)
+    DOUBLE_BARLINE  reduce using rule 20 (seventh_chord -> triad SIX .)
+    LEFT_REPEAT     reduce using rule 20 (seventh_chord -> triad SIX .)
+    RIGHT_REPEAT    reduce using rule 20 (seventh_chord -> triad SIX .)
+    NOTE            reduce using rule 20 (seventh_chord -> triad SIX .)
+
+
+state 26
+
+    (22) seventh_chord -> triad SEVENTH_QUALITY . SEVEN
+    (23) seventh_chord -> triad SEVENTH_QUALITY . UPPER_STRUCTURE
+
+    SEVEN           shift and go to state 30
+    UPPER_STRUCTURE shift and go to state 31
+
+
+state 27
+
+    (17) slash_chord -> triad SLASH . NOTE
+
+    NOTE            shift and go to state 32
+
+
+state 28
+
+    (7) measure -> barline chord_sequence . barline
+    (12) chord_sequence -> chord_sequence . chord
+    (8) barline -> . SINGLE_BARLINE
+    (9) barline -> . DOUBLE_BARLINE
+    (10) barline -> . LEFT_REPEAT
+    (11) barline -> . RIGHT_REPEAT
+    (14) chord -> . triad
+    (15) chord -> . seventh_chord
+    (16) chord -> . slash_chord
+    (24) triad -> . NOTE
+    (25) triad -> . NOTE TRIAD_QUALITY
+    (19) seventh_chord -> . triad SEVEN
+    (20) seventh_chord -> . triad SIX
+    (21) seventh_chord -> . triad UPPER_STRUCTURE
+    (22) seventh_chord -> . triad SEVENTH_QUALITY SEVEN
+    (23) seventh_chord -> . triad SEVENTH_QUALITY UPPER_STRUCTURE
+    (17) slash_chord -> . triad SLASH NOTE
+    (18) slash_chord -> . seventh_chord SLASH NOTE
+
+    SINGLE_BARLINE  shift and go to state 16
+    DOUBLE_BARLINE  shift and go to state 5
+    LEFT_REPEAT     shift and go to state 15
+    RIGHT_REPEAT    shift and go to state 9
+    NOTE            shift and go to state 10
+
+    chord                          shift and go to state 21
+    seventh_chord                  shift and go to state 7
+    slash_chord                    shift and go to state 8
+    triad                          shift and go to state 13
+    barline                        shift and go to state 33
+
+state 29
+
+    (18) slash_chord -> seventh_chord SLASH NOTE .
+
+    SINGLE_BARLINE  reduce using rule 18 (slash_chord -> seventh_chord SLASH NOTE .)
+    DOUBLE_BARLINE  reduce using rule 18 (slash_chord -> seventh_chord SLASH NOTE .)
+    LEFT_REPEAT     reduce using rule 18 (slash_chord -> seventh_chord SLASH NOTE .)
+    RIGHT_REPEAT    reduce using rule 18 (slash_chord -> seventh_chord SLASH NOTE .)
+    NOTE            reduce using rule 18 (slash_chord -> seventh_chord SLASH NOTE .)
+
+
+state 30
+
+    (22) seventh_chord -> triad SEVENTH_QUALITY SEVEN .
+
+    SLASH           reduce using rule 22 (seventh_chord -> triad SEVENTH_QUALITY SEVEN .)
+    SINGLE_BARLINE  reduce using rule 22 (seventh_chord -> triad SEVENTH_QUALITY SEVEN .)
+    DOUBLE_BARLINE  reduce using rule 22 (seventh_chord -> triad SEVENTH_QUALITY SEVEN .)
+    LEFT_REPEAT     reduce using rule 22 (seventh_chord -> triad SEVENTH_QUALITY SEVEN .)
+    RIGHT_REPEAT    reduce using rule 22 (seventh_chord -> triad SEVENTH_QUALITY SEVEN .)
+    NOTE            reduce using rule 22 (seventh_chord -> triad SEVENTH_QUALITY SEVEN .)
+
+
+state 31
+
+    (23) seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .
+
+    SLASH           reduce using rule 23 (seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .)
+    SINGLE_BARLINE  reduce using rule 23 (seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .)
+    DOUBLE_BARLINE  reduce using rule 23 (seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .)
+    LEFT_REPEAT     reduce using rule 23 (seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .)
+    RIGHT_REPEAT    reduce using rule 23 (seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .)
+    NOTE            reduce using rule 23 (seventh_chord -> triad SEVENTH_QUALITY UPPER_STRUCTURE .)
+
+
+state 32
+
+    (17) slash_chord -> triad SLASH NOTE .
+
+    SINGLE_BARLINE  reduce using rule 17 (slash_chord -> triad SLASH NOTE .)
+    DOUBLE_BARLINE  reduce using rule 17 (slash_chord -> triad SLASH NOTE .)
+    LEFT_REPEAT     reduce using rule 17 (slash_chord -> triad SLASH NOTE .)
+    RIGHT_REPEAT    reduce using rule 17 (slash_chord -> triad SLASH NOTE .)
+    NOTE            reduce using rule 17 (slash_chord -> triad SLASH NOTE .)
+
+
+state 33
+
+    (7) measure -> barline chord_sequence barline .
+
+    SINGLE_BARLINE  reduce using rule 7 (measure -> barline chord_sequence barline .)
+    DOUBLE_BARLINE  reduce using rule 7 (measure -> barline chord_sequence barline .)
+    LEFT_REPEAT     reduce using rule 7 (measure -> barline chord_sequence barline .)
+    RIGHT_REPEAT    reduce using rule 7 (measure -> barline chord_sequence barline .)
+    NOTE            reduce using rule 7 (measure -> barline chord_sequence barline .)
+    SECTION_NAME    reduce using rule 7 (measure -> barline chord_sequence barline .)
+    $end            reduce using rule 7 (measure -> barline chord_sequence barline .)
 
