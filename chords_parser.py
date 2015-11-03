@@ -11,16 +11,13 @@ def p_song(p):
     if len(p) == 2:
         p[0] = Song(p[1])
     else:
-        p[1].append(p[1])
+        p[1].append(p[2])
         p[0] = p[1]
     print 'Song:\n', p[0]
 
 
 def p_section(p):
     '''section : SECTION_NAME measure_sequence'''
-    print 'from p_section'
-    print 'p[1]',p[1]
-    print 'p[2]',p[2]
     p[2].name = p[1]
     p[0] = p[2]
     print 'Section:', p[0]

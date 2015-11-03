@@ -19,7 +19,6 @@ class Song(object):
         return "Song(%s)" % self.sections
 
     def __str__(self):
-        print len(self.sections)
         return '\n'.join([i for i in map(str, self.sections)])
 
 

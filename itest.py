@@ -6,4 +6,4 @@ b = 'C-7  F7/A  G9| F-6/Ab |'
 c = 'G7b913'
 song = '(Verse)|Eb-7 Ab7 | Dbmaj7 Db7|| (Bridge)|Gbmaj7 Gb-6/A|Db/Ab Ab13||'
 
-parser.parse(a)
+parser.parse(song)

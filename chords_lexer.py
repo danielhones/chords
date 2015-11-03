@@ -39,7 +39,7 @@ def t_SEVENTH_QUALITY(t):
 
 
 def t_SECTION_NAME(t):
-    r'\((?P<name>.*)\)'
+    r'\((?P<name>.*?)\)'
     t.value = t.lexer.lexmatch.group('name')
     return t
 
