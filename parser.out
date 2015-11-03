@@ -1,0 +1,60 @@
+Created by PLY version 3.6 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> triad
+Rule 1     triad -> NOTE
+Rule 2     triad -> NOTE TRIAD_QUALITY
+Rule 3     seventh -> SEVEN
+Rule 4     seventh -> SEVENTH_QUALITY SEVEN
+Rule 5     seventh -> SEVENTH_QUALITY UPPER_STRUCTURE
+Rule 6     seventh -> SIX
+Rule 7     seventh_chord -> triad seventh
+Rule 8     seventh_chord -> triad seventh UPPER_STRUCTURE
+Rule 9     chord -> triad
+Rule 10    chord -> seventh_chord
+Rule 11    slash_chord -> root_chord SLASH NOTE
+Rule 12    chord -> root_chord SPACE
+Rule 13    chord -> slash_chord SPACE
+Rule 14    chord_sequence -> chord
+Rule 15    chord_sequence -> chord chord_sequence
+Rule 16    barline -> SINGLE_BARLINE
+Rule 17    barline -> DOUBLE_BARLINE
+Rule 18    barline -> LEFT_REPEAT
+Rule 19    barline -> RIGHT_REPEAT
+Rule 20    measure -> chord_sequence barline
+Rule 21    measure -> barline chord_sequence barline
+Rule 22    section -> SECTION_NAME section
+Rule 23    section -> measure section
+Rule 24    section -> measure DOUBLE_BARLINE
+
+Terminals, with rules where they appear
+
+DOUBLE_BARLINE       : 17 24
+LEFT_REPEAT          : 18
+NOTE                 : 1 2 11
+RIGHT_REPEAT         : 19
+SECTION_NAME         : 22
+SEVEN                : 3 4
+SEVENTH_QUALITY      : 4 5
+SINGLE_BARLINE       : 16
+SIX                  : 6
+SLASH                : 11
+SPACE                : 12 13
+TRIAD_QUALITY        : 2
+UPPER_STRUCTURE      : 5 8
+error                : 
+
+Nonterminals, with rules where they appear
+
+barline              : 20 21 21
+chord                : 14 15
+chord_sequence       : 15 20 21
+measure              : 23 24
+root_chord           : 11 12
+section              : 22 23
+seventh              : 7 8
+seventh_chord        : 10
+slash_chord          : 13
+triad                : 7 8 9 0
+
